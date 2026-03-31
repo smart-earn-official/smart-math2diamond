@@ -34,9 +34,10 @@
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
+            color: white;
         }
-        .btn-red { background-color: #ff4c4c; color: white; }
-        .btn-green { background-color: #2ecc71; color: white; }
+        .btn-red { background-color: #ff4c4c; }
+        .btn-green { background-color: #2ecc71; }
         
         .container {
             max-width: 400px;
@@ -68,9 +69,24 @@
             font-size: 16px;
             margin-top: 10px;
         }
-        #quiz-section { display: none; }
-        .success-msg { color: #2ecc71; font-weight: bold; margin: 10px 0; }
-        .error-msg { color: #e74c3c; font-weight: bold; margin: 10px 0; }
+        
+        /* Sections control */
+        #quiz-section, #store-section { display: none; }
+        
+        .success-msg { color: #2ecc71; font-weight: bold; }
+        .error-msg { color: #e74c3c; font-weight: bold; }
+
+        /* Store Styles */
+        .package {
+            background-color: #2a2a2a;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #444;
+        }
     </style>
 </head>
 <body>
@@ -78,8 +94,8 @@
     <div class="header">SMART MATH2DIAMOND</div>
 
     <div class="btn-container">
-        <button class="btn btn-red">Main Store</button>
-        <button class="btn btn-green">Get Free Diamonds 💎</button>
+        <button class="btn btn-red" onclick="showSection('store')">Main Store</button>
+        <button class="btn btn-green" onclick="showSection('quiz')">Get Free Diamonds 💎</button>
     </div>
 
     <div id="auth-section" class="container">
@@ -96,7 +112,7 @@
         <div style="clear: both;"></div>
         
         <h2 style="margin-top: 10px;">Solve & Earn Coins!</h2>
-        <p style="font-size: 18px;">Your Coins: <span id="coin-display" style="color: #2ecc71; font-weight: bold;">0</span></p>
+        <p style="font-size: 18px;">Your Coins: <span id="coin-display-quiz" style="color: #2ecc71; font-weight: bold;">0</span></p>
         <p style="font-size: 16px;">Value: <span style="color: #2ecc71; font-weight: bold;">$<span id="dollar-display">0.00</span></span></p>
 
         <h1 id="question" style="color: #f1c40f; font-size: 36px; margin: 20px 0;">-- + -- = ?</h1>
@@ -107,13 +123,46 @@
         <p style="margin-top: 20px;"><small>💡 10,000 Coins = $1.00</small></p>
     </div>
 
+    <div id="store-section" class="container">
+        <button class="btn btn-red" style="float: right; padding: 5px 10px; font-size: 12px;" onclick="logout()">Logout</button>
+        <div style="clear: both;"></div>
+
+        <h2>Diamond Store 💎</h2>
+        <p style="font-size: 18px;">Your Coins: <span id="coin-display-store" style="color: #2ecc71; font-weight: bold;">0</span></p>
+        <hr style="border: 1px solid #444;">
+
+        <div class="package">
+            <div>
+                <b style="color: #00d2d3;">100 Diamonds</b><br>
+                <small style="color: #aaa;">Cost: 1,000 Coins</small>
+            </div>
+            <button class="btn btn-green" onclick="buyDiamonds(100, 1000)">Buy</button>
+        </div>
+
+        <div class="package">
+            <div>
+                <b style="color: #00d2d3;">500 Diamonds</b><br>
+                <small style="color: #aaa;">Cost: 5,000 Coins</small>
+            </div>
+            <button class="btn btn-green" onclick="buyDiamonds(500, 5000)">Buy</button>
+        </div>
+
+        <div class="package">
+            <div>
+                <b style="color: #00d2d3;">1000 Diamonds</b><br>
+                <small style="color: #aaa;">Cost: 10,000 Coins</small>
+            </div>
+            <button class="btn btn-green" onclick="buyDiamonds(1000, 10000)">Buy</button>
+        </div>
+
+        <p id="store-msg"></p>
+    </div>
+
     <script type="module">
-        // Firebase CDN Modules ආනයනය කිරීම
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, get, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // ඔබ ලබාදුන් Firebase Configuration එක
         const firebaseConfig = {
           apiKey: "AIzaSyC7tt9khXdXwOf-dlrqXK0estg9_yF9sLw",
           authDomain: "smart-math-2-diamond-b7c73.firebaseapp.com",
@@ -124,7 +173,6 @@
           appId: "1:731094601612:web:3671bd485d353c1c7610a9"
         };
 
-        // Firebase Initialize කිරීම
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const database = getDatabase(app);
@@ -137,16 +185,16 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserId = user.uid;
-                document.getElementById('auth-section').style.display = 'none';
-                document.getElementById('quiz-section').style.display = 'block';
+                showSection('quiz'); // Login වුනාම මුලින්ම පෙන්වන්නේ Quiz එක.
                 
-                // Realtime Database එකෙන් User ගේ කොයින් ගණන සජීවීව ලබා ගැනීම
                 const userCoinsRef = ref(database, 'users/' + currentUserId + '/coins');
                 onValue(userCoinsRef, (snapshot) => {
                     userCoins = snapshot.val() || 0;
-                    document.getElementById('coin-display').innerText = userCoins;
                     
-                    // ඩොලර් වටිනාකම දශමස්ථාන දෙකකට පෙන්වීම
+                    // Display Coins in both sections
+                    document.getElementById('coin-display-quiz').innerText = userCoins;
+                    document.getElementById('coin-display-store').innerText = userCoins;
+                    
                     let dollarValue = (userCoins * 0.0001).toFixed(2);
                     document.getElementById('dollar-display').innerText = dollarValue;
                 });
@@ -155,10 +203,22 @@
             } else {
                 document.getElementById('auth-section').style.display = 'block';
                 document.getElementById('quiz-section').style.display = 'none';
+                document.getElementById('store-section').style.display = 'none';
             }
         });
 
-        // අලුත් Account එකක් සෑදීම
+        // Navigation (Sections අතර මාරු වීම)
+        window.showSection = function(section) {
+            if (!currentUserId) {
+                alert("Please login first!");
+                return;
+            }
+            document.getElementById('quiz-section').style.display = (section === 'quiz') ? 'block' : 'none';
+            document.getElementById('store-section').style.display = (section === 'store') ? 'block' : 'none';
+            document.getElementById('auth-section').style.display = 'none';
+        }
+
+        // Account එකක් සෑදීම
         window.register = function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -167,14 +227,9 @@
 
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    // අලුතින් Register වන අයට මුලින් කොයින් 0 ක් Database එකට ඇතුලත් කිරීම
-                    set(ref(database, 'users/' + userCredential.user.uid), {
-                        coins: 0
-                    });
+                    set(ref(database, 'users/' + userCredential.user.uid), { coins: 0 });
                 })
-                .catch((error) => {
-                    msgDiv.innerText = error.message;
-                });
+                .catch((error) => { msgDiv.innerText = error.message; });
         }
 
         // Login වීම
@@ -185,15 +240,11 @@
             msgDiv.innerText = "";
 
             signInWithEmailAndPassword(auth, email, password)
-                .catch((error) => {
-                    msgDiv.innerText = "Error: Email or Password incorrect!";
-                });
+                .catch((error) => { msgDiv.innerText = "Error: Email or Password incorrect!"; });
         }
 
         // Logout වීම
-        window.logout = function() {
-            signOut(auth);
-        }
+        window.logout = function() { signOut(auth); }
 
         // ගණිත ගැටලුව හැදීම
         function generateQuestion() {
@@ -209,22 +260,36 @@
             const feedback = document.getElementById('feedback-msg');
 
             if (userAnswer === correctAnswer) {
-                userCoins += 10; // එක හරි උත්තරේකට කොයින් 10ක්
+                userCoins += 10;
+                update(ref(database, 'users/' + currentUserId), { coins: userCoins });
 
-                // Database එකේ ඇති Coins ප්‍රමාණය Update කිරීම
-                update(ref(database, 'users/' + currentUserId), {
-                    coins: userCoins
-                });
-
-                feedback.innerHTML = "<span class='success-msg'>Correct! +10 Coins Added.</span>";
+                feedback.innerHTML = "<span class='success-msg'>Correct! +10 Coins.</span>";
                 document.getElementById('user-answer').value = '';
                 generateQuestion();
             } else {
-                feedback.innerHTML = "<span class='error-msg'>Wrong Answer! Try again.</span>";
+                feedback.innerHTML = "<span class='error-msg'>Wrong Answer!</span>";
+            }
+            setTimeout(() => { feedback.innerHTML = ""; }, 2000);
+        }
+
+        // Store එකෙන් පැකේජ් මිලදී ගැනීම සහ Coins අඩු වීම (NEW)
+        window.buyDiamonds = function(diamonds, cost) {
+            const storeMsg = document.getElementById('store-msg');
+            
+            if (userCoins >= cost) {
+                userCoins -= cost; // කොයින් ගණන අඩු කිරීම
+                
+                // Firebase එකට අලුත් කොයින් ගණන Update කිරීම
+                update(ref(database, 'users/' + currentUserId), { coins: userCoins });
+                
+                storeMsg.innerHTML = `<span class='success-msg'>Purchase Successful! You bought ${diamonds} Diamonds.</span>`;
+                
+                // මෙතනට ඔයාට පුළුවන් Withdraw / Top-up රික්වෙස්ට් එකක් Admin ට යන විදිහට කෝඩ් එකක් දාන්න.
+            } else {
+                storeMsg.innerHTML = "<span class='error-msg'>Not enough coins to buy this package!</span>";
             }
             
-            // තත්පර 2කින් feedback මැසේජ් එක අයින් කිරීම
-            setTimeout(() => { feedback.innerHTML = ""; }, 2000);
+            setTimeout(() => { storeMsg.innerHTML = ""; }, 3000);
         }
     </script>
 </body>
