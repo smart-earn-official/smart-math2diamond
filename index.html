@@ -33,12 +33,10 @@
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
-            text-decoration: none;
             color: white;
         }
         .btn-red { background-color: #ff4c4c; }
         .btn-green { background-color: #2ecc71; }
-        .btn-blue { background-color: #3498db; }
         
         .container {
             max-width: 400px;
@@ -47,7 +45,6 @@
             border: 2px solid #f1c40f;
             border-radius: 10px;
             background-color: #1a1a1a;
-            position: relative;
         }
         input {
             width: 80%;
@@ -72,13 +69,11 @@
             margin-top: 10px;
         }
         
-        /* Sections control */
-        #quiz-section, #real-store-section, #coin-store-section { display: none; }
+        #quiz-section, #store-section { display: none; }
         
         .success-msg { color: #2ecc71; font-weight: bold; }
         .error-msg { color: #e74c3c; font-weight: bold; }
 
-        /* Store Styles */
         .package {
             background-color: #2a2a2a;
             margin: 10px 0;
@@ -89,28 +84,6 @@
             align-items: center;
             border: 1px solid #444;
         }
-
-        /* Modal Popup */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #1a1a1a;
-            padding: 20px;
-            border: 2px solid #f1c40f;
-            border-radius: 10px;
-            z-index: 1000;
-            width: 300px;
-        }
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 999;
-        }
     </style>
 </head>
 <body>
@@ -118,9 +91,8 @@
     <div class="header">SMART MATH2DIAMOND</div>
 
     <div class="btn-container">
-        <button class="btn btn-red" onclick="showSection('real-store')">Main Store 🛒</button>
-        <button class="btn btn-blue" onclick="showSection('quiz')">Earn Coins 📝</button>
-        <button class="btn btn-green" onclick="showSection('coin-store')">Redeem Store 💎</button>
+        <button class="btn btn-red" onclick="showSection('store')">Main Store</button>
+        <button class="btn btn-green" onclick="showSection('quiz')">Get Free Diamonds 💎</button>
     </div>
 
     <div id="auth-section" class="container">
@@ -137,7 +109,7 @@
         <div style="clear: both;"></div>
         
         <h2 style="margin-top: 10px;">Solve & Earn Coins!</h2>
-        <p style="font-size: 18px;">Your Coins: <span class="coin-display" style="color: #2ecc71; font-weight: bold;">0</span></p>
+        <p style="font-size: 18px;">Your Coins: <span id="coin-display-quiz" style="color: #2ecc71; font-weight: bold;">0</span></p>
         <p style="font-size: 16px;">Value: <span style="color: #2ecc71; font-weight: bold;">$<span id="dollar-display">0.00</span></span></p>
 
         <h1 id="question" style="color: #f1c40f; font-size: 36px; margin: 20px 0;">-- + -- = ?</h1>
@@ -148,57 +120,36 @@
         <p style="margin-top: 20px;"><small>💡 10,000 Coins = $1.00</small></p>
     </div>
 
-    <div id="real-store-section" class="container">
+    <div id="store-section" class="container">
         <button class="btn btn-red" style="float: right; padding: 5px 10px; font-size: 12px;" onclick="logout()">Logout</button>
         <div style="clear: both;"></div>
 
-        <h2>Main Diamond Store 🛒</h2>
-        <p style="color: #aaa;">සැබෑ මුදල් ගෙවා මිලදී ගන්න</p>
-        <hr style="border: 1px solid #444;">
-
-        <div class="package">
-            <div><b style="color: #00d2d3;">100 Diamonds</b><br><small style="color: #aaa;">Price: LKR 350</small></div>
-            <button class="btn btn-red" onclick="openOrderModal('100 Diamonds (Paid)', 0)">Buy Now</button>
-        </div>
-
-        <div class="package">
-            <div><b style="color: #00d2d3;">500 Diamonds</b><br><small style="color: #aaa;">Price: LKR 1500</small></div>
-            <button class="btn btn-red" onclick="openOrderModal('500 Diamonds (Paid)', 0)">Buy Now</button>
-        </div>
-    </div>
-
-    <div id="coin-store-section" class="container">
-        <button class="btn btn-red" style="float: right; padding: 5px 10px; font-size: 12px;" onclick="logout()">Logout</button>
-        <div style="clear: both;"></div>
-
-        <h2>Free Diamonds Store 💎</h2>
-        <p style="font-size: 18px;">Your Coins: <span class="coin-display" style="color: #2ecc71; font-weight: bold;">0</span></p>
+        <h2>Diamond Store 💎</h2>
+        <p style="font-size: 18px;">Your Coins: <span id="coin-display-store" style="color: #2ecc71; font-weight: bold;">0</span></p>
         <hr style="border: 1px solid #444;">
 
         <div class="package">
             <div><b style="color: #00d2d3;">100 Diamonds</b><br><small style="color: #aaa;">Cost: 1,000 Coins</small></div>
-            <button class="btn btn-green" onclick="openOrderModal('100 Diamonds (Free)', 1000)">Redeem</button>
+            <button class="btn btn-green" onclick="buyDiamonds('100 Diamonds', 1000)">Buy</button>
         </div>
 
         <div class="package">
             <div><b style="color: #00d2d3;">500 Diamonds</b><br><small style="color: #aaa;">Cost: 5,000 Coins</small></div>
-            <button class="btn btn-green" onclick="openOrderModal('500 Diamonds (Free)', 5000)">Redeem</button>
+            <button class="btn btn-green" onclick="buyDiamonds('500 Diamonds', 5000)">Buy</button>
         </div>
-    </div>
 
-    <div class="modal-overlay" id="overlay"></div>
-    <div class="modal" id="order-modal">
-        <h3>Enter Player ID</h3>
-        <p id="selected-pkg" style="color: #f1c40f;"></p>
-        <input type="text" id="player-id" placeholder="Enter Free Fire ID"><br>
-        <button class="btn btn-green" onclick="processOrder()">Confirm</button>
-        <button class="btn btn-red" onclick="closeModal()">Cancel</button>
+        <div class="package">
+            <div><b style="color: #00d2d3;">1000 Diamonds</b><br><small style="color: #aaa;">Cost: 10,000 Coins</small></div>
+            <button class="btn btn-green" onclick="buyDiamonds('1000 Diamonds', 10000)">Buy</button>
+        </div>
+
+        <p id="store-msg"></p>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, get, set, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyC7tt9khXdXwOf-dlrqXK0estg9_yF9sLw",
@@ -218,8 +169,6 @@
         let userEmail = "";
         let userCoins = 0;
         let num1, num2, correctAnswer;
-        let activePkg = "";
-        let activeCost = 0;
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -230,23 +179,23 @@
                 const userCoinsRef = ref(database, 'users/' + currentUserId + '/coins');
                 onValue(userCoinsRef, (snapshot) => {
                     userCoins = snapshot.val() || 0;
-                    document.querySelectorAll('.coin-display').forEach(el => el.innerText = userCoins);
+                    document.getElementById('coin-display-quiz').innerText = userCoins;
+                    document.getElementById('coin-display-store').innerText = userCoins;
                     document.getElementById('dollar-display').innerText = (userCoins * 0.0001).toFixed(2);
                 });
+
                 generateQuestion();
             } else {
                 document.getElementById('auth-section').style.display = 'block';
                 document.getElementById('quiz-section').style.display = 'none';
-                document.getElementById('real-store-section').style.display = 'none';
-                document.getElementById('coin-store-section').style.display = 'none';
+                document.getElementById('store-section').style.display = 'none';
             }
         });
 
         window.showSection = function(section) {
             if (!currentUserId) { alert("Please login first!"); return; }
             document.getElementById('quiz-section').style.display = (section === 'quiz') ? 'block' : 'none';
-            document.getElementById('real-store-section').style.display = (section === 'real-store') ? 'block' : 'none';
-            document.getElementById('coin-store-section').style.display = (section === 'coin-store') ? 'block' : 'none';
+            document.getElementById('store-section').style.display = (section === 'store') ? 'block' : 'none';
             document.getElementById('auth-section').style.display = 'none';
         }
 
@@ -254,15 +203,15 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             createUserWithEmailAndPassword(auth, email, password)
-                .then((cred) => { set(ref(database, 'users/' + cred.user.uid), { coins: 0 }); })
-                .catch((err) => { document.getElementById('auth-msg').innerText = err.message; });
+                .then((userCredential) => { set(ref(database, 'users/' + userCredential.user.uid), { coins: 0 }); })
+                .catch((error) => { document.getElementById('auth-msg').innerText = error.message; });
         }
 
         window.login = function() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             signInWithEmailAndPassword(auth, email, password)
-                .catch((err) => { document.getElementById('auth-msg').innerText = "Incorrect Email or Password!"; });
+                .catch((error) => { document.getElementById('auth-msg').innerText = "Incorrect Email or Password!"; });
         }
 
         window.logout = function() { signOut(auth); }
@@ -275,58 +224,53 @@
         }
 
         window.checkAnswer = function() {
-            const ans = parseInt(document.getElementById('user-answer').value);
+            const userAnswer = parseInt(document.getElementById('user-answer').value);
             const feedback = document.getElementById('feedback-msg');
-            if (ans === correctAnswer) {
+
+            if (userAnswer === correctAnswer) {
                 userCoins += 10;
                 update(ref(database, 'users/' + currentUserId), { coins: userCoins });
                 feedback.innerHTML = "<span class='success-msg'>Correct! +10 Coins.</span>";
                 document.getElementById('user-answer').value = '';
                 generateQuestion();
-            } else { feedback.innerHTML = "<span class='error-msg'>Wrong Answer!</span>"; }
+            } else {
+                feedback.innerHTML = "<span class='error-msg'>Wrong Answer!</span>";
+            }
             setTimeout(() => { feedback.innerHTML = ""; }, 2000);
         }
 
-        // Popup විවෘත කිරීම
-        window.openOrderModal = function(packageName, cost) {
-            if (cost > 0 && userCoins < cost) { alert("Not enough coins!"); return; }
-            activePkg = packageName;
-            activeCost = cost;
-            document.getElementById('selected-pkg').innerText = "Item: " + packageName;
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('order-modal').style.display = 'block';
-        }
+        // Store එකෙන් ගන්නා විට Coins අඩු වී Admin Page එකට (Firebase 'orders' වෙත) ඩේටා යැවීම
+        window.buyDiamonds = function(packageName, cost) {
+            const storeMsg = document.getElementById('store-msg');
+            
+            if (userCoins >= cost) {
+                const playerId = prompt("Please enter your Free Fire Player ID:");
+                
+                if (!playerId) {
+                    alert("Player ID is required to complete the purchase!");
+                    return;
+                }
 
-        window.closeModal = function() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('order-modal').style.display = 'none';
-            document.getElementById('player-id').value = "";
-        }
-
-        // Order එක සත්‍යාපනය කර සේව් කිරීම
-        window.processOrder = function() {
-            const playerId = document.getElementById('player-id').value;
-            if (!playerId) { alert("Please enter Player ID!"); return; }
-
-            // Free store එකෙන් නම් කොයින්ස් අඩු කිරීම
-            if (activeCost > 0) {
-                userCoins -= activeCost;
+                userCoins -= cost;
+                
+                // 1. User ගේ කොයින් ගණන ඩේටාබේස් එකේ අප්ඩේට් කිරීම
                 update(ref(database, 'users/' + currentUserId), { coins: userCoins });
+                
+                // 2. Admin Page එකට පෙනෙන්න 'orders' යටතට රික්වෙස්ට් එක යැවීම
+                push(ref(database, 'orders'), {
+                    email: userEmail,
+                    playerId: playerId,
+                    pkg: packageName,
+                    status: "Pending",
+                    time: new Date().toLocaleString()
+                });
+
+                storeMsg.innerHTML = "<span class='success-msg'>Purchase Successful! Admin will process your diamonds soon.</span>";
+            } else {
+                storeMsg.innerHTML = "<span class='error-msg'>Not enough coins to buy this package!</span>";
             }
-
-            // Firebase එකට Orders ලෙස සේව් කිරීම (Adminට දැකීමට)
-            const ordersRef = ref(database, 'orders');
-            push(ordersRef, {
-                userId: currentUserId,
-                email: userEmail,
-                pkg: activePkg,
-                playerId: playerId,
-                status: "Pending",
-                time: new Date().toLocaleString()
-            });
-
-            alert("Order Placed Successfully! Admin will process it soon.");
-            closeModal();
+            
+            setTimeout(() => { storeMsg.innerHTML = ""; }, 3000);
         }
     </script>
 </body>
