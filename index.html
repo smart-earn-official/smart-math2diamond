@@ -3,275 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Math2Diamond | Top-Up Store</title>
+    <title>Smart Math2Diamond Store</title>
     <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
-            text-align: center;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Top Header */
         .header {
-            background: linear-gradient(90deg, #ff4c4c, #f1c40f);
-            padding: 20px;
+            width: 100%;
+            background: linear-gradient(90deg, #ff5e00, #ffbb00);
+            padding: 20px 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
             font-size: 24px;
             font-weight: bold;
+            color: #ffffff;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .btn-container {
+
+        /* Navigation Buttons */
+        .nav-buttons {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin: 15px 0;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            color: white;
-        }
-        .btn-red { background-color: #ff4c4c; }
-        .btn-green { background-color: #2ecc71; }
-        
-        .container {
+            width: 100%;
             max-width: 400px;
             margin: 20px auto;
-            padding: 30px 20px;
-            border: 2px solid #f1c40f;
-            border-radius: 10px;
-            background-color: #1a1a1a;
+            padding: 0 10px;
         }
-        input {
-            width: 80%;
+
+        .btn-nav {
+            flex: 1;
             padding: 12px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #333;
-            background-color: #2a2a2a;
-            color: white;
-            text-align: center;
-            font-size: 16px;
-        }
-        .submit-btn {
-            padding: 12px 30px;
-            background-color: #ff4c4c;
-            color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
+            text-align: center;
+            text-decoration: none;
+            transition: 0.2s;
         }
-        
-        #quiz-section, #store-section { display: none; }
-        
-        .success-msg { color: #2ecc71; font-weight: bold; }
-        .error-msg { color: #e74c3c; font-weight: bold; }
 
-        .package {
-            background-color: #2a2a2a;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 5px;
+        .btn-home {
+            background-color: #e53935;
+            color: white;
+        }
+
+        .btn-free {
+            background-color: #00e676;
+            color: #000;
+        }
+
+        .btn-nav:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* Store Container */
+        .store-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Card Style */
+        .package-card {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            border: 1px solid #444;
+            gap: 12px;
+        }
+
+        /* Card 1 Specific Border */
+        .card-paid {
+            border: 1px solid #ffaa00;
+        }
+
+        /* Card 2 Specific Border */
+        .card-free {
+            border: 1px solid #333333;
+        }
+
+        .game-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 5px;
+        }
+
+        .package-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffbb00;
+        }
+
+        .card-free .package-title {
+            color: #ffffff;
+        }
+
+        .package-desc {
+            font-size: 14px;
+            color: #cccccc;
+            line-height: 1.5;
+            max-width: 300px;
+        }
+
+        .package-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+            margin: 5px 0;
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            width: 100%;
+            max-width: 200px;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-buy {
+            background-color: #e53935;
+            color: white;
+        }
+
+        .btn-redeem {
+            background-color: #00e676;
+            color: #000;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
         }
     </style>
 </head>
 <body>
 
-    <div class="header">SMART MATH2DIAMOND</div>
-
-    <div class="btn-container">
-        <button class="btn btn-red" onclick="showSection('store')">Main Store</button>
-        <button class="btn btn-green" onclick="showSection('quiz')">Get Free Diamonds 💎</button>
+    <div class="header">
+        <h1>Smart Math2Diamond</h1>
     </div>
 
-    <div id="auth-section" class="container">
-        <h2>Login or Register</h2>
-        <input type="email" id="email" placeholder="Enter Email"><br>
-        <input type="password" id="password" placeholder="Enter Password"><br>
-        <button class="submit-btn" onclick="login()">Login</button>
-        <button class="submit-btn" style="background-color: #2ecc71;" onclick="register()">Register</button>
-        <p id="auth-msg" class="error-msg"></p>
+    <div class="nav-buttons">
+        <a href="#" class="btn-nav btn-home">Home (Store)</a>
+        <a href="#" class="btn-nav btn-free">Get Diamonds Free 💎</a>
     </div>
 
-    <div id="quiz-section" class="container">
-        <button class="btn btn-red" style="float: right; padding: 5px 10px; font-size: 12px;" onclick="logout()">Logout</button>
-        <div style="clear: both;"></div>
-        
-        <h2 style="margin-top: 10px;">Solve & Earn Coins!</h2>
-        <p style="font-size: 18px;">Your Coins: <span id="coin-display-quiz" style="color: #2ecc71; font-weight: bold;">0</span></p>
-        <p style="font-size: 16px;">Value: <span style="color: #2ecc71; font-weight: bold;">$<span id="dollar-display">0.00</span></span></p>
+    <div class="store-container">
 
-        <h1 id="question" style="color: #f1c40f; font-size: 36px; margin: 20px 0;">-- + -- = ?</h1>
-        <input type="number" id="user-answer" placeholder="Your Answer"><br>
-        <button class="submit-btn" onclick="checkAnswer()">Submit</button>
-
-        <p id="feedback-msg"></p>
-        <p style="margin-top: 20px;"><small>💡 10,000 Coins = $1.00</small></p>
-    </div>
-
-    <div id="store-section" class="container">
-        <button class="btn btn-red" style="float: right; padding: 5px 10px; font-size: 12px;" onclick="logout()">Logout</button>
-        <div style="clear: both;"></div>
-
-        <h2>Diamond Store 💎</h2>
-        <p style="font-size: 18px;">Your Coins: <span id="coin-display-store" style="color: #2ecc71; font-weight: bold;">0</span></p>
-        <hr style="border: 1px solid #444;">
-
-        <div class="package">
-            <div><b style="color: #00d2d3;">100 Diamonds</b><br><small style="color: #aaa;">Cost: 1,000 Coins</small></div>
-            <button class="btn btn-green" onclick="buyDiamonds('100 Diamonds', 1000)">Buy</button>
-        </div>
-
-        <div class="package">
-            <div><b style="color: #00d2d3;">500 Diamonds</b><br><small style="color: #aaa;">Cost: 5,000 Coins</small></div>
-            <button class="btn btn-green" onclick="buyDiamonds('500 Diamonds', 5000)">Buy</button>
-        </div>
-
-        <div class="package">
-            <div><b style="color: #00d2d3;">1000 Diamonds</b><br><small style="color: #aaa;">Cost: 10,000 Coins</small></div>
-            <button class="btn btn-green" onclick="buyDiamonds('1000 Diamonds', 10000)">Buy</button>
-        </div>
-
-        <p id="store-msg"></p>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getDatabase, ref, set, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyC7tt9khXdXwOf-dlrqXK0estg9_yF9sLw",
-          authDomain: "smart-math-2-diamond-b7c73.firebaseapp.com",
-          databaseURL: "https://smart-math-2-diamond-b7c73-default-rtdb.firebaseio.com",
-          projectId: "smart-math-2-diamond-b7c73",
-          storageBucket: "smart-math-2-diamond-b7c73.firebasestorage.app",
-          messagingSenderId: "731094601612",
-          appId: "1:731094601612:web:3671bd485d353c1c7610a9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const database = getDatabase(app);
-
-        let currentUserId = null;
-        let userEmail = "";
-        let userCoins = 0;
-        let num1, num2, correctAnswer;
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                userEmail = user.email;
-                showSection('quiz');
-                
-                const userCoinsRef = ref(database, 'users/' + currentUserId + '/coins');
-                onValue(userCoinsRef, (snapshot) => {
-                    userCoins = snapshot.val() || 0;
-                    document.getElementById('coin-display-quiz').innerText = userCoins;
-                    document.getElementById('coin-display-store').innerText = userCoins;
-                    document.getElementById('dollar-display').innerText = (userCoins * 0.0001).toFixed(2);
-                });
-
-                generateQuestion();
-            } else {
-                document.getElementById('auth-section').style.display = 'block';
-                document.getElementById('quiz-section').style.display = 'none';
-                document.getElementById('store-section').style.display = 'none';
-            }
-        });
-
-        window.showSection = function(section) {
-            if (!currentUserId) { alert("Please login first!"); return; }
-            document.getElementById('quiz-section').style.display = (section === 'quiz') ? 'block' : 'none';
-            document.getElementById('store-section').style.display = (section === 'store') ? 'block' : 'none';
-            document.getElementById('auth-section').style.display = 'none';
-        }
-
-        window.register = function() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => { set(ref(database, 'users/' + userCredential.user.uid), { coins: 0 }); })
-                .catch((error) => { document.getElementById('auth-msg').innerText = error.message; });
-        }
-
-        window.login = function() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            signInWithEmailAndPassword(auth, email, password)
-                .catch((error) => { document.getElementById('auth-msg').innerText = "Incorrect Email or Password!"; });
-        }
-
-        window.logout = function() { signOut(auth); }
-
-        function generateQuestion() {
-            num1 = Math.floor(Math.random() * 20) + 1;
-            num2 = Math.floor(Math.random() * 20) + 1;
-            correctAnswer = num1 + num2;
-            document.getElementById('question').innerText = `${num1} + ${num2} = ?`;
-        }
-
-        window.checkAnswer = function() {
-            const userAnswer = parseInt(document.getElementById('user-answer').value);
-            const feedback = document.getElementById('feedback-msg');
-
-            if (userAnswer === correctAnswer) {
-                userCoins += 10;
-                update(ref(database, 'users/' + currentUserId), { coins: userCoins });
-                feedback.innerHTML = "<span class='success-msg'>Correct! +10 Coins.</span>";
-                document.getElementById('user-answer').value = '';
-                generateQuestion();
-            } else {
-                feedback.innerHTML = "<span class='error-msg'>Wrong Answer!</span>";
-            }
-            setTimeout(() => { feedback.innerHTML = ""; }, 2000);
-        }
-
-        // Store එකෙන් ගන්නා විට Coins අඩු වී Admin Page එකට (Firebase 'orders' වෙත) ඩේටා යැවීම
-        window.buyDiamonds = function(packageName, cost) {
-            const storeMsg = document.getElementById('store-msg');
+        <div class="package-card card-paid">
+            <img src="https://upload.wikimedia.org/wikipedia/en/c/cc/Free_Fire_logo.png" alt="Free Fire" class="game-logo">
             
-            if (userCoins >= cost) {
-                const playerId = prompt("Please enter your Free Fire Player ID:");
-                
-                if (!playerId) {
-                    alert("Player ID is required to complete the purchase!");
-                    return;
-                }
-
-                userCoins -= cost;
-                
-                // 1. User ගේ කොයින් ගණන ඩේටාබේස් එකේ අප්ඩේට් කිරීම
-                update(ref(database, 'users/' + currentUserId), { coins: userCoins });
-                
-                // 2. Admin Page එකට පෙනෙන්න 'orders' යටතට රික්වෙස්ට් එක යැවීම
-                push(ref(database, 'orders'), {
-                    email: userEmail,
-                    playerId: playerId,
-                    pkg: packageName,
-                    status: "Pending",
-                    time: new Date().toLocaleString()
-                });
-
-                storeMsg.innerHTML = "<span class='success-msg'>Purchase Successful! Admin will process your diamonds soon.</span>";
-            } else {
-                storeMsg.innerHTML = "<span class='error-msg'>Not enough coins to buy this package!</span>";
-            }
+            <h2 class="package-title">Free Fire Diamonds</h2>
+            <p class="package-desc">Pay and get diamonds directly sent to your Player ID instantly.</p>
             
-            setTimeout(() => { storeMsg.innerHTML = ""; }, 3000);
-        }
-    </script>
+            <div class="package-price">From $1.00</div>
+            
+            <button class="btn-action btn-buy">Buy Now</button>
+        </div>
+
+        <div class="package-card card-free">
+            <img src="https://upload.wikimedia.org/wikipedia/en/c/cc/Free_Fire_logo.png" alt="Free Fire Free" class="game-logo">
+            
+            <h2 class="package-title">Diamonds (Earned Coins)</h2>
+            <p class="package-desc">Redeem free diamonds using the coins you have collected in the game.</p>
+            
+            <div class="package-price">From 5000 Coins</div>
+            
+            <button class="btn-action btn-redeem">Redeem Now</button>
+        </div>
+
+    </div>
+
 </body>
 </html>
