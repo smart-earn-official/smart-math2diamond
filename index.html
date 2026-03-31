@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Math2Diamond | Top-Up Store</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #ffb700;
+            --secondary: #00ff6c;
+            --bg-dark: #121212;
+            --card-bg: #1e1e1e;
+            --text-white: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+        }
+        header {
+            background: linear-gradient(135deg, #ff4a4a, #ffb700);
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+        .nav-bar {
+            background-color: #1a1a1a;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-btn {
+            background: #ff4a4a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .nav-btn:hover { opacity: 0.9; }
+        .container {
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            width: 290px;
+            margin: 15px;
+            overflow: hidden;
+            text-align: center;
+            border: 1px solid #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .card img { width: 100%; height: 150px; object-fit: cover; }
+        .card h3 { margin: 15px 0 5px 0; color: var(--primary); }
+        .card p { color: #ccc; font-size: 14px; padding: 0 10px; line-height: 1.5; }
+        .price { font-size: 18px; font-weight: bold; color: #fff; margin: 10px 0; }
+        .btn {
+            display: inline-block;
+            background-color: #ff4a4a;
+            color: white;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover { background-color: #d13434; }
+        
+        /* Quiz Section */
+        .quiz-section {
+            display: none;
+            max-width: 500px;
+            margin: 30px auto;
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            box-shadow: 0 4px 20px rgba(255, 183, 0, 0.2);
+        }
+        .wallet {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+        }
+        .wallet span { color: var(--secondary); font-weight: bold; font-size: 20px; }
+        .quiz-box {
+            font-size: 36px;
+            margin: 20px 0;
+            font-weight: bold;
+            color: var(--primary);
+            background: #121212;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        input {
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: white;
+            text-align: center;
+            outline: none;
+            margin-bottom: 10px;
+        }
+        input:focus { border-color: var(--primary); }
+        .submit-btn {
+            background-color: var(--secondary);
+            color: black;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 16px;
+        }
+        
+        /* Modal for Withdraw */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid var(--secondary);
+            z-index: 1000;
+            text-align: center;
+            width: 300px;
+        }
+        .modal-bg {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+<header>SMART MATH2DIAMOND</header>
+
+<div class="nav-bar">
+    <button class="nav-btn" onclick="showStore()">මුල් පිටුව (Store)</button>
+    <button class="nav-btn" style="background:var(--secondary); color:black;" onclick="showQuiz()">Get Diamonds Free 💎</button>
+</div>
+
+<div class="container" id="store-area">
+    <div class="card">
+        <img src="https://via.placeholder.com/300x150" alt="Free Fire">
+        <h3>Free Fire Diamonds</h3>
+        <p>සල්ලි ගෙවලා ඔබේ ID එකටම කෙලින්ම ඩයමන්ඩ් ගන්න.</p>
+        <div class="price">LKR 150 සිට</div>
+        <a href="#" class="btn">දැන්ම ගන්න</a>
+    </div>
+
+    <div class="card">
+        <img src="https://via.placeholder.com/300x150" alt="Free Fire Free">
+        <h3>Diamonds (Earned Coins)</h3>
+        <p>ඔයා එකතු කරපු කොයින් වලින් නොමිලේ ඩයමන්ඩ් ගන්න.</p>
+        <div class="price">5000 Coins සිට</div>
+        <button class="btn" style="background:var(--secondary); color:black;" onclick="openWithdraw()">Redeem Now</button>
+    </div>
+</div>
+
+<div class="quiz-section" id="quiz-area">
+    <h2>ගණන් හදලා කොයින් දිනන්න!</h2>
+    <div class="wallet">
+        <p>Weekly Coins: <span id="coin-display">Loading...</span></p>
+        <p>Value: <span id="dollar-display">$0.00</span></p>
+    </div>
+    <div class="quiz-box" id="quiz-question">0 + 0 = ?</div>
+    <input type="number" id="user-answer" placeholder="පිළිතුර මෙතන"><br>
+    <button class="submit-btn" onclick="checkAnswer()">Submit</button>
+    <div style="font-size:12px; color:#aaa; margin-top:15px;">💡 1000 Coins = $1.00</div>
+</div>
+
+<div class="modal-bg" id="modal-bg" onclick="closeWithdraw()"></div>
+<div class="modal" id="withdraw-modal">
+    <h3>Redeem Diamonds</h3>
+    <p style="font-size:14px; color:#ccc;">අවම වශයෙන් කොයින් 5000ක් අවශ්‍යයි.</p>
+    <input type="text" id="player-id" placeholder="Free Fire Player ID"><br>
+    <input type="text" id="wa-num" placeholder="WhatsApp Number"><br>
+    <button class="submit-btn" style="background:var(--primary)" onclick="submitWithdraw()">ඉල්ලීම යවන්න</button>
+</div>
+
+<script>
+    // --- Firebase Setup (ඔයාගේම Config එක) ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyC7tt9khXdXwOf-dlrqXK0estg9_yF9sLw",
+        authDomain: "smart-math-2-diamond-b7c73.firebaseapp.com",
+        projectId: "smart-math-2-diamond-b7c73",
+        storageBucket: "smart-math-2-diamond-b7c73.firebasestorage.app",
+        messagingSenderId: "731094601612",
+        appId: "1:731094601612:web:3671bd485d353c1c7610a9",
+        databaseURL: "https://smart-math-2-diamond-b7c73-default-rtdb.firebaseio.com/"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // User ID (ෆෝන් එකට වෙනම ID එකක් හදනවා)
+    let userId = localStorage.getItem('gameUserId');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('gameUserId', userId);
+    }
+
+    let coins = 0;
+    let currentAnswer = 0;
+
+    // Firebase එකෙන් කොයින් ලබා ගැනීම
+    database.ref('users/' + userId).on('value', (snapshot) => {
+        const data = snapshot.val();
+        coins = data ? data.coins : 0;
+        document.getElementById('coin-display').innerText = coins;
+        document.getElementById('dollar-display').innerText = "$" + (coins / 1000).toFixed(2);
+    });
+
+    function generateQuiz() {
+        let num1 = Math.floor(Math.random() * 20) + 1;
+        let num2 = Math.floor(Math.random() * 20) + 1;
+        let operators = ['+', '-'];
+        let operator = operators[Math.floor(Math.random() * operators.length)];
+
+        if(operator === '+') {
+            currentAnswer = num1 + num2;
+            document.getElementById('quiz-question').innerText = `${num1} + ${num2} = ?`;
+        } else {
+            if(num1 >= num2) {
+                currentAnswer = num1 - num2;
+                document.getElementById('quiz-question').innerText = `${num1} - ${num2} = ?`;
+            } else {
+                currentAnswer = num2 - num1;
+                document.getElementById('quiz-question').innerText = `${num2} - ${num1} = ?`;
+            }
+        }
+    }
+
+    function checkAnswer() {
+        let userAnswer = parseInt(document.getElementById('user-answer').value);
+        if (userAnswer === currentAnswer) {
+            alert('නිවැරදියි! කොයින් 10ක් ලැබුණා.');
+            coins += 10;
+            database.ref('users/' + userId).set({ coins: coins });
+            document.getElementById('user-answer').value = '';
+            generateQuiz();
+        } else {
+            alert('වැරදියි!');
+        }
+    }
+
+    function openWithdraw() {
+        document.getElementById('modal-bg').style.display = 'block';
+        document.getElementById('withdraw-modal').style.display = 'block';
+    }
+    function closeWithdraw() {
+        document.getElementById('modal-bg').style.display = 'none';
+        document.getElementById('withdraw-modal').style.display = 'none';
+    }
+
+    function submitWithdraw() {
+        let pid = document.getElementById('player-id').value;
+        let wa = document.getElementById('wa-num').value;
+        
+        if(coins < 5000) {
+            alert('ඔබට ප්‍රමාණවත් කොයින් නැත (අවම 5000 ඕනෑ)!');
+            return;
+        }
+        if(!pid || !wa) {
+            alert('කරුණාකර සියලු විස්තර ඇතුලත් කරන්න.');
+            return;
+        }
+
+        // Firebase එකට Withdraw Request එකක් යැවීම
+        database.ref('withdraws/').push({
+            userId: userId,
+            playerId: pid,
+            whatsapp: wa,
+            coins: coins,
+            date: new Date().toLocaleString()
+        }).then(() => {
+            alert('ඉල්ලීම සාර්ථකව යොමු කළා! අපි ඔබව සම්බන්ධ කරගන්නම්.');
+            closeWithdraw();
+        });
+    }
+
+    function showStore() { document.getElementById('store-area').style.display = 'flex'; document.getElementById('quiz-area').style.display = 'none'; }
+    function showQuiz() { document.getElementById('store-area').style.display = 'none'; document.getElementById('quiz-area').style.display = 'block'; generateQuiz(); }
+</script>
+</body>
+</html>
